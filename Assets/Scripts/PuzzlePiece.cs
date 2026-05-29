@@ -32,9 +32,9 @@ public class PuzzlePiece : MonoBehaviour
         if (CameraController.IsRotating) return;
 
         isDragging = true;
-        zDistance = Vector3.Distance(mainCam.transform.position, transform.position);
         Vector3 screenPos = mainCam.WorldToScreenPoint(transform.position);
-        Vector3 mouseWorld = mainCam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPos.z));
+        zDistance = screenPos.z;
+        Vector3 mouseWorld = mainCam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, zDistance));
         offset = transform.position - mouseWorld;
 
         if (pieceRenderer != null)

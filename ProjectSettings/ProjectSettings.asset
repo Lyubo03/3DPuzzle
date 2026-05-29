@@ -119,7 +119,6 @@ PlayerSettings:
   XboxOneXTitleMemory: 8
   XboxOneOverrideIdentityName:
   XboxOneOverrideIdentityPublisher:
-  vraboreto: 1
   XboxOneIsUniversalDeveloperBinary: 0
   ps4NPAgeRating: 12
   ps4NPTitleSecret:
@@ -176,7 +175,6 @@ PlayerSettings:
   ps4PatchLatestPkgPath:
   ps4PatchChangeinfoPath:
   ps4PatchDayOne: 0
-  ps4attaboreto: 0
   ps4attribShareSupport: 0
   ps4attribMoveSupport: 0
   ps4IncludedModules: []
@@ -185,7 +183,6 @@ PlayerSettings:
   ps4AllowPS5Detection: 0
   ps4GPU800MHz: 1
   ps4attribVROutputEnabled: 0
-  ps4PnijeSomethingOrOther: 0
   monoEnv:
   splashScreenBackgroundSourceLandscape: {fileID: 0}
   splashScreenBackgroundSourcePortrait: {fileID: 0}

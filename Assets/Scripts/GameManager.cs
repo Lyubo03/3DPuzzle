@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public ParticleSystem confettiEffect;
 
     [Header("Settings")]
-    public int totalPieces = 6;
+    public int totalPieces = 7;
 
     private int placedCount = 0;
 

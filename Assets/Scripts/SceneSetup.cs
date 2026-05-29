@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Attach this to an empty GameObject and press Play.
@@ -39,7 +40,7 @@ public class SceneSetup : MonoBehaviour
         // GameManager
         GameObject gm = new GameObject("GameManager");
         GameManager manager = gm.AddComponent<GameManager>();
-        manager.totalPieces = 6;
+        manager.totalPieces = 7;
 
         // UI
         SetupUI(manager);
@@ -51,8 +52,9 @@ public class SceneSetup : MonoBehaviour
             new PieceData("FrontWall", new Vector3(0, 1.35f, -2),  Vector3.zero,              new Vector3(4, 2.5f, 0.3f), new Color(0.9f, 0.85f, 0.7f), new Vector3(5, 0, -4)),
             new PieceData("BackWall",  new Vector3(0, 1.35f, 2),   Vector3.zero,              new Vector3(4, 2.5f, 0.3f), new Color(0.9f, 0.85f, 0.7f), new Vector3(-4, 0, 5)),
             new PieceData("LeftWall",  new Vector3(-2, 1.35f, 0),  new Vector3(0, 90, 0),     new Vector3(4, 2.5f, 0.3f), new Color(0.85f, 0.8f, 0.65f), new Vector3(6, 0, 3)),
-            new PieceData("Roof",      new Vector3(0, 3.1f, 0),    new Vector3(0, 0, 0),      new Vector3(4.5f, 0.3f, 4.5f), new Color(0.7f, 0.2f, 0.2f), new Vector3(-6, 0, -5)),
-            new PieceData("Door",      new Vector3(0, 0.85f, -2.1f), Vector3.zero,            new Vector3(1, 1.7f, 0.1f), new Color(0.4f, 0.25f, 0.1f), new Vector3(4, 0, -6)),
+            new PieceData("RightWall", new Vector3(2, 1.35f, 0),   new Vector3(0, 90, 0),     new Vector3(4, 2.5f, 0.3f), new Color(0.85f, 0.8f, 0.65f), new Vector3(-6, 0, 4)),
+            new PieceData("Roof",      new Vector3(0, 3.1f, 0),    new Vector3(0, 0, 0),      new Vector3(4.5f, 0.3f, 4.5f), new Color(0.7f, 0.2f, 0.2f), new Vector3(5, 0, 6)),
+            new PieceData("Door",      new Vector3(0, 0.85f, -2.1f), Vector3.zero,            new Vector3(1, 1.7f, 0.1f), new Color(0.4f, 0.25f, 0.1f), new Vector3(-5, 0, -6)),
         };
 
         foreach (PieceData data in pieces)
@@ -115,11 +117,16 @@ public class SceneSetup : MonoBehaviour
         canvasObj.AddComponent<CanvasScaler>();
         canvasObj.AddComponent<GraphicRaycaster>();
 
+        // EventSystem (required for UI button clicks)
+        GameObject eventSystem = new GameObject("EventSystem");
+        eventSystem.AddComponent<EventSystem>();
+        eventSystem.AddComponent<StandaloneInputModule>();
+
         // Progress text
         GameObject textObj = new GameObject("ProgressText");
         textObj.transform.SetParent(canvasObj.transform, false);
         Text progressText = textObj.AddComponent<Text>();
-        progressText.text = "Placed: 0/6";
+        progressText.text = "Placed: 0/7";
         progressText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         progressText.fontSize = 24;
         progressText.color = Color.white;
