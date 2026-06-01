@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Unity.XR.CoreUtils;
+using UnityEngine.XR.ARFoundation;
 
 /// <summary>
 /// Attach this to an empty GameObject and press Play.
@@ -8,6 +10,8 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class SceneSetup : MonoBehaviour
 {
+    private Transform puzzleRoot;
+
     void Awake()
     {
         BuildScene();
@@ -16,6 +20,35 @@ public class SceneSetup : MonoBehaviour
 
     void BuildScene()
     {
+        // Root that parents the entire puzzle so AR placement can move/scale it as one.
+        GameObject rootObj = new GameObject("PuzzleRoot");
+        puzzleRoot = rootObj.transform;
+
+        // --- AR rig ---
+        GameObject sessionObj = new GameObject("AR Session");
+        ARSession arSession = sessionObj.AddComponent<ARSession>();
+        sessionObj.AddComponent<ARInputManager>();
+
+        GameObject originObj = new GameObject("XR Origin");
+        XROrigin xrOrigin = originObj.AddComponent<XROrigin>();
+
+        GameObject camOffset = new GameObject("Camera Offset");
+        camOffset.transform.SetParent(originObj.transform, false);
+        xrOrigin.CameraFloorOffsetObject = camOffset;
+
+        GameObject camObj = new GameObject("AR Camera");
+        camObj.transform.SetParent(camOffset.transform, false);
+        camObj.tag = "MainCamera";
+        Camera cam = camObj.AddComponent<Camera>();
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        cam.backgroundColor = Color.black;
+        cam.nearClipPlane = 0.1f;
+        cam.farClipPlane = 20f;
+        camObj.AddComponent<ARCameraManager>();
+        camObj.AddComponent<ARCameraBackground>();
+        camObj.AddComponent<UnityEngine.SpatialTracking.TrackedPoseDriver>();
+        xrOrigin.Camera = cam;
+
         // Ground
         GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
         ground.name = "Ground";
@@ -23,6 +56,7 @@ public class SceneSetup : MonoBehaviour
         ground.transform.localScale = new Vector3(15, 0.2f, 15);
         ground.GetComponent<Renderer>().material.color = new Color(0.3f, 0.7f, 0.3f);
         Destroy(ground.GetComponent<Collider>()); // Don't interfere with raycasts
+        ground.transform.SetParent(puzzleRoot, true);
 
         // Lighting
         GameObject light = new GameObject("DirectionalLight");
@@ -31,11 +65,6 @@ public class SceneSetup : MonoBehaviour
         l.type = LightType.Directional;
         l.intensity = 1f;
         l.shadows = LightShadows.Soft;
-
-        // Camera
-        Camera.main.transform.position = new Vector3(8, 6, 8);
-        Camera.main.transform.LookAt(Vector3.up * 1.5f);
-        Camera.main.gameObject.AddComponent<CameraController>();
 
         // GameManager
         GameObject gm = new GameObject("GameManager");
@@ -80,6 +109,15 @@ public class SceneSetup : MonoBehaviour
         shape.radius = 1f;
         ps.Stop();
         manager.confettiEffect = ps;
+        confettiObj.transform.SetParent(puzzleRoot, true);
+
+        // Auto-place the whole puzzle in front of the AR camera once tracking is ready.
+        ARPuzzlePlacer placer = rootObj.AddComponent<ARPuzzlePlacer>();
+        placer.puzzleRoot = puzzleRoot;
+        placer.arSession = arSession;
+        placer.arCamera = camObj.transform;
+        placer.distance = 0.5f;
+        placer.rootScale = 0.1f;
     }
 
     void CreatePiece(PieceData data)
@@ -105,7 +143,9 @@ public class SceneSetup : MonoBehaviour
         PuzzlePiece pp = piece.AddComponent<PuzzlePiece>();
         pp.targetPosition = ghost.transform;
         pp.snapThreshold = Mathf.Max(data.scale.x, data.scale.z) * 0.4f;
-        pp.dragHeight = data.scale.y / 2f + 0.5f;
+
+        ghost.transform.SetParent(puzzleRoot, true);
+        piece.transform.SetParent(puzzleRoot, true);
     }
 
     void SetupUI(GameManager manager)

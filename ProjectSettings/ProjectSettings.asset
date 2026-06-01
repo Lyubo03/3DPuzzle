@@ -24,6 +24,10 @@ PlayerSettings:
   displayResolutionDialog: 0
   bundleVersion: 0.1
   preloadedAssets: []
+  cameraUsageDescription: Camera is used to display the AR puzzle.
+  locationUsageDescription:
+  microphoneUsageDescription:
+  activeInputHandler: 0
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
